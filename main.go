@@ -1,8 +1,13 @@
 package main
 
 import (
+	//"errors"
 	"fmt"
+	"runtime"
+	"sync"
 	//"time"
+	//"time"
+	//"sort"
 )
 
 // ******simple function calling and const
@@ -166,11 +171,185 @@ import (
 // 	fmt.Println(u);
 // }
 // ****** Anoynimous Struct
-func main(){
-	nameing := struct{
-		name string
-	}{name: "wawa"}
-	fmt.Print(nameing)
-}
+// func main(){
+// 	nameing := struct{
+// 		name string
+// 	}{name: "wawa"}
+// 	fmt.Print(nameing)
+// }
 // ******////// Anoynimous Struct//////
-// ******////// Struct //////
+
+// ****** Return and handle an error
+
+// func main() {
+//     // Get a greeting message and print it.
+//     hi, _ := Hello("jnjn")
+//     fmt.Println(hi)
+// }
+// // Hello returns a greeting for the named person.
+// func Hello(name string) (string, error) {
+//     // If no name was given, return an error with a message.
+//     if name == "" {
+//         return "", errors.New("empty name")
+//     }
+//     // If a name was received, return a value that embeds the name
+//     // in a greeting message.
+//     message := fmt.Sprintf("Hi, %v. Welcome!", name)
+//     return message, nil
+// }
+
+// ******////// Return and handle an error //////
+
+// ****** Slices
+// func main() {
+// array := [5]int{1, 2, 3, 4, 5,}
+// slice := array[0:4]
+
+// fmt.Println("Array: ", array)
+// fmt.Println("Slice: ", slice)
+// fmt.Println(len(slice))
+// fmt.Println(cap(slice))
+// slice = append(slice, 10)
+// fmt.Println(slice)
+// fmt.Println(len(slice))
+// fmt.Println(cap(slice))
+// slice = append(slice, 19)
+// fmt.Println(slice)
+// fmt.Println(len(slice))
+// fmt.Println(cap(slice))
+
+// slicebymake := make([]int, 4,7)
+// fmt.Println(slicebymake)
+// fmt.Println(len(slicebymake))
+// fmt.Println(cap(slicebymake))
+
+//}
+// ******/////// Slices//////
+
+// ****** Sorting Slices
+// func main(){
+// slice1:= []int {32,-89,2,-9,0,-64,87,10}
+// fmt.Println(slice1)
+// sort.Ints(slice1)
+// fmt.Println(slice1)
+// }
+// ******/////// Sorting Slices//////
+
+// ****** Panic and Recovery
+// func Divide(a, b int) int {
+// 	// Defer a function to handle recovery.
+// 	defer func() {
+// 		if r := recover(); r != nil {
+// 			// Recovered from a panic. Print an error message.
+// 			fmt.Println("Recovered from panic:", r)
+// 		}
+// 	}()
+
+// 	if b == 0 {
+// 		// Divide by zero is not allowed. Panic with an error message.
+// 		panic("Division by zero")
+// 	}
+
+// 	// Perform the division.
+// 	return a / b
+// }
+
+// func main() {
+// 	// Call the Divide function with various inputs.
+// 	result1 := Divide(6, 3)
+// 	fmt.Println("Result1:", result1)
+
+// 	result2 := Divide(8, 0) // This will panic.
+// 	fmt.Println("Result2:", result2) // This line won't be reached due to the panic.
+
+// 	result3 := Divide(10, 2)
+// 	fmt.Println("Result3:", result3)
+// }
+
+// ******///////Panic and Recovery//////
+
+// ****** ConCureency
+// We define two functions, printNumbers and printLetters, which print numbers and letters respectively with a small delay between each print.
+// In the main function, we start both printNumbers and printLetters as goroutines using the go keyword. This allows them to run concurrently.
+// We use time.Sleep to give the goroutines some time to execute before the main function exits.
+// When you run this program, you'll see numbers and letters printed concurrently, indicating concurrent execution.
+// func printNumbers() {
+// 	for i := 1; i <= 5; i++ {
+// 		fmt.Printf("%d ", i)
+// 		time.Sleep(1 * time.Second)
+// 	}
+// }
+
+// func printLetters() {
+// 	for _, char := range "ABCDE" {
+// 		fmt.Printf("%c ", char)
+// 		time.Sleep(1 * time.Second)
+// 	}
+// }
+
+// func main() {
+// 	go printNumbers() // Start printing numbers concurrently.
+// 	go printLetters() // Start printing letters concurrently.
+
+// 	// Sleep for a while to allow goroutines to execute.
+// 	time.Sleep(9 * time.Second)
+
+// 	fmt.Println("\nMain function is done.")
+// }
+
+// ******///////ConCureency//////
+
+// ***** parallelism
+
+// We use runtime.GOMAXPROCS to specify the maximum number of CPU cores to use for parallelism. In this case, we set it to 2 to utilize two CPU cores.
+// We define two functions, printNumbers and printLetters, which print numbers and letters, respectively.
+// In the main function, we use a sync.WaitGroup to wait for the goroutines to finish.
+// We start two goroutines, one for each function. These goroutines can execute in parallel on the available CPU cores.
+// The wg.Wait() call waits for both goroutines to complete before allowing the main function to exit.
+func printNumbers() {
+	for i := 1; i <= 5; i++ {
+		fmt.Printf("%d ", i)
+	}
+}
+
+func printLetters() {
+	for _, char := range "ABCDE" {
+		fmt.Printf("%c ", char)
+	}
+}
+
+func main() {
+	// Set the maximum number of CPU cores to be used.
+	runtime.GOMAXPROCS(2) // Using 2 cores for parallelism.
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		printNumbers()
+	}()
+
+	go func() {
+		defer wg.Done()
+		printLetters()
+	}()
+
+	wg.Wait()
+
+	fmt.Println("\nMain function is done.")
+}
+
+// ******///////parallelism//////
+
+// ***** Channels
+// syntax
+// var channel_name = chan int
+// channel_name := make(chan type)
+
+// to send
+// chan1 <- chan2
+// to recieve
+// var := <- chan1
+
+// ******///////  Channels  //////
