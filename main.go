@@ -2,11 +2,13 @@ package main
 
 import (
 	//"errors"
+	//"encoding/json"
 	"fmt"
-	"runtime"
-	"sync"
-	//"time"
-	//"time"
+	custom_package "gomodulename/custom"
+	// "sync"
+	// "time"
+	//"strings"
+	//"runtime"
 	//"sort"
 )
 
@@ -306,39 +308,41 @@ import (
 // In the main function, we use a sync.WaitGroup to wait for the goroutines to finish.
 // We start two goroutines, one for each function. These goroutines can execute in parallel on the available CPU cores.
 // The wg.Wait() call waits for both goroutines to complete before allowing the main function to exit.
-func printNumbers() {
-	for i := 1; i <= 5; i++ {
-		fmt.Printf("%d ", i)
-	}
-}
+// func printNumbers() {
+// 	for i := 1; i <= 5; i++ {
+// 		fmt.Printf("%d ", i)
+// 		time.Sleep(1 * time.Second)
+// 	}
+// }
 
-func printLetters() {
-	for _, char := range "ABCDE" {
-		fmt.Printf("%c ", char)
-	}
-}
+// func printLetters() {
+// 	for _, char := range "ABCDE" {
+// 		fmt.Printf("%c ", char)
+// 		time.Sleep(1 * time.Second)
+// 	}
+// }
 
-func main() {
-	// Set the maximum number of CPU cores to be used.
-	runtime.GOMAXPROCS(2) // Using 2 cores for parallelism.
+// func main() {
+// 	// Set the maximum number of CPU cores to be used.
+// 	//runtime.GOMAXPROCS(2) // Using 2 cores for parallelism.
 
-	var wg sync.WaitGroup
-	wg.Add(2)
+// 	var wg sync.WaitGroup
+// 	wg.Add(2) //here 2 represent number of goroutines we are having
 
-	go func() {
-		defer wg.Done()
-		printNumbers()
-	}()
+// 	go func() {
+// 		defer wg.Done()
+// 		printNumbers()
+// 	}()
 
-	go func() {
-		defer wg.Done()
-		printLetters()
-	}()
+// 	go func() {
+// 		defer wg.Done()
+// 		printLetters()
+// 	}()
 
-	wg.Wait()
+// 	wg.Wait()
 
-	fmt.Println("\nMain function is done.")
-}
+// 	fmt.Println("\nMain function is done.")
+// }
 
 // ******///////parallelism//////
 
@@ -351,5 +355,276 @@ func main() {
 // chan1 <- chan2
 // to recieve
 // var := <- chan1
+// Close a channel: close(channel).
+// After closing, no value will be sent to the channel.
 
+// EXAMPLE 1
+// Prints a greeting message using values received in
+// the channel
+// func greet(c chan string) {
+
+// 	name := <- c	// receiving value from channel
+// 	fmt.Println("Hello", name)
+// }
+
+// func main() {
+
+// 	// Making a channel of value type string
+// 	text := make(chan string)
+
+// 	// Starting a concurrent goroutine
+// 	go greet(text)
+
+// 	// Sending values to the channel c
+// 	text <- "World"
+
+// 	// Closing channel
+// 	close(text)
+// }
+
+// EXAMPLE 1 ENDS
+
+// EXAMPLE 2
+
+// func main() {
+// 	n := 3
+
+// 	// This is where we "make" the channel, which can be used
+// 	// to move the `int` datatype
+// 	cname := make(chan int)
+
+// 	// We still run this function as a goroutine, but this time,
+// 	// the channel that we made is also provided
+// 	go multiplyByTwo(n, cname)
+
+// 	// Once any output is received on this channel, print it to the console and proceed
+// 	fmt.Println(<-cname)
+// }
+
+// // This function now accepts a channel as its second argument...
+// // here (out chan<- int) will give the value to chan
+// func multiplyByTwo(num int, out chan<- int) {
+// 	result := num * 2
+
+// 	//... and pipes the result into it
+// 	out <- result
+// }
+
+// EXAMPLE 2 ENDS
 // ******///////  Channels  //////
+
+// ***** Select
+// if multiple cases are ready to proceed, then one of them can be selected randomly.
+// The default statement in the select statement is used to protect select
+// statement from blocking. This statement executes when there is no case statement is ready to proceed.
+// func main() {
+// 	chan1 := make(chan string)
+// 	chan2 := make(chan int)
+
+// 	go fun1(chan1)
+// 	go fun2(chan2)
+
+// 	select {
+// 	case val1 := <-chan1:
+// 		fmt.Println(val1)
+// 	case val2 := <-chan2:
+// 		fmt.Println(val2)
+// 	}
+
+// }
+// func fun1(chanel1 chan string) {
+// 	chanel1 <- "chnel1 executed"
+
+// }
+// func fun2(chanel2 chan int) {
+// 	chanel2 <- 22
+// }
+
+// ******///////  Select  //////
+
+// ***** Mutex
+// '********** EXample 1
+// type  safecounter struct{
+// 	mu sync.Mutex
+// 	val int
+// }
+// func (c *safecounter) Increment(){
+// 		c.mu.Lock()
+// 		defer c.mu.Unlock()
+// 		c.val++
+// }
+// func (c *safecounter) GetValue() int {
+// 		c.mu.Lock()
+// 		defer c.mu.Unlock()
+// 		return c.val
+// 	}
+// func main(){
+// 	counter := safecounter{}
+// 	for i := 0; i < 10; i++ {
+// 		 go func() {
+// 			 counter.Increment()
+// 		}()
+// 	}
+// 	time.Sleep(1 * time.Second)
+// 	fmt.Printf("Final counter value: %d\n", counter.GetValue())
+// }
+// '********** EXample 1 ends
+
+// '********** EXample 2
+
+// type Counter struct {
+// 	mu sync.Mutex
+// 	value int
+// }
+
+// func (c *Counter) Increment() {
+// 	c.mu.Lock()
+// 	defer c.mu.Unlock()
+// 	c.value++
+// }
+
+// func (c *Counter) GetValue() int {
+// 	c.mu.Lock()
+// 	defer c.mu.Unlock()
+// 	return c.value
+// }
+
+// func main() {
+// 	counter := &Counter{}
+
+// 	for i := 0; i < 10; i++ {
+// 		go func() {
+// 			counter.Increment()
+// 		}()
+// 	}
+
+// 	time.Sleep(1 * time.Second) // Wait for goroutines to finish
+
+// 	fmt.Printf("Final counter value: %d\n", counter.GetValue())
+// }
+
+// '********** EXample 2 ends
+
+// ******///////  Mutex  //////
+
+// ****** Interface
+// syntax:
+// type interface_name Interface{
+// }
+// Example 1
+// type my_struct struct {
+// 	first  int
+// 	second int
+// }
+
+// type my_interface interface {
+// 	//these are signatures which should must be implemented
+// 	add(a, b int) int
+// 	multi(a, b int) int
+// }
+
+// func (met my_struct) add(a, b int) int {
+// 	return a + b + met.first + met.second
+// }
+// func (met my_struct) multi(a, b int) int {
+// 	return a * b * met.first * met.second
+// }
+// func main() {
+// 	var t my_interface
+// 	t = my_struct{1, 2} //this 1,2 will be store in met.first and met.second
+// 	fmt.Println(t.add(1, 2))             //this 1,2 will be store in a ,b
+// 	fmt.Println(t.multi(1, 2))           //this 1,2 will be store in a ,b
+// }
+
+// Example 1 ends
+// ******///////  Interface  //////
+
+// ****** MAPS
+
+// syntax
+//var map_name map[key_type]value_type
+//ex: "apples" : 1
+//we can direct assign values:
+// mp := make(map[string]int{
+// 	"peach" : 2,
+// 	"grapes" : 3,
+// 	"apples" : 1,
+// 	"bananas" : 2,
+// })
+// empty map
+// mp := make(map[string]int)
+// func main(){
+// 	var map_name map[string]int = map[string]int{
+// 		"peach" : 2,
+// 		"grapes" : 3,
+// 		"apples" : 1,
+// 		"bananas" : 2,
+// 	}
+// fmt.Println(map_name)
+// fmt.Println(map_name["apples"])
+//to change value
+// map_name["apples"] = 2
+// fmt.Println(map_name)
+// //to add new value
+// map_name["oranges"] = 2
+// fmt.Println(map_name)
+// //to delete value
+// delete(map_name, "peach")
+// fmt.Println(map_name)
+//to check does value exit or not and if doesnot exit then add that value
+//val , ok := map_name["peach"]
+// fmt.Println(val, ok)
+// fmt.Println(len(map_name))
+//for loop in map
+// 	for k, v := range map_name {
+// 		fmt.Println(k,v)
+// 	}
+// }
+
+// ******///////  MAPS  //////
+
+// ****** JSON Manupulating
+// Example 1
+// func main(){
+// 	var info map[string]interface{}
+// 	data := `{"name":"saad", "age":22, "number":234234234}`
+// 	err := json.Unmarshal([]byte(data), &info)
+// 	if err != nil{
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(info)
+//  	fmt.Println(info["name"])
+//  }
+// Example 1 ends
+
+// Example 2
+// type Mystruct struct {
+// 	Name string
+// 	Age int
+// 	Number int
+// }
+// func main(){
+// 	var wrapdata Mystruct
+// 	data := `{"name":"saad", "age":22, "number":234234234}`
+// 	err := json.Unmarshal([]byte(data), &wrapdata)
+// 	if err != nil{
+// 		fmt.Println(err)
+// 	}
+// 	fmt.Println(wrapdata.Age)
+// }
+// Example 2 ends
+// ******///////  JSON Manupulating  //////
+
+
+// ******///////  CUSTOM PACKAGE  //////
+// firstly you will need a mod file
+// 1) go mod init .
+// 2) go mod init gomodulename
+
+
+func main(){
+	custom_package.PrintValues("kjnkbk")
+	custom_package.Val = 100
+	fmt.Println(custom_package.Val)
+}
+// ******///////  CUSTOM PACKAGE   //////
