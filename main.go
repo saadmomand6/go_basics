@@ -3,13 +3,21 @@ package main
 import (
 	//"errors"
 	//"encoding/json"
-	"fmt"
-	custom_package "gomodulename/custom"
+	//"fmt"
 	// "sync"
 	// "time"
 	//"strings"
 	//"runtime"
 	//"sort"
+	// custom_package "gomodulename/custom"
+	//"encoding/json"
+	// "encoding/json"
+	// "io"
+	"gomodulename/database"
+	"gomodulename/models"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 )
 
 // ******simple function calling and const
@@ -615,16 +623,124 @@ import (
 // Example 2 ends
 // ******///////  JSON Manupulating  //////
 
-
 // ******///////  CUSTOM PACKAGE  //////
 // firstly you will need a mod file
 // 1) go mod init .
 // 2) go mod init gomodulename
 
+// func main(){
+// 	custom_package.PrintValues("kjnkbk")
+// 	custom_package.Val = 100
+// 	fmt.Println(custom_package.Val)
+// }
+// ******///////  CUSTOM PACKAGE   //////
+
+// ******///////  GIN FRAMWORK //////
+// func main(){
+// 	router := gin.Default()
+// 	// the get function requires a path and a function
+// 	router.GET("/firstApi", func (c *gin.Context){
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"data": "i am your first framework",
+// 		  })
+// 		})
+// 	router.Run()
+// }
+// ******///////  GIN FRAMWORK //////
+
+// ******///////  API understanding //////
+type api struct{
+	Name string `json:"name"`
+	Email string `json: "email"`
+}
+
+ var data api
 
 func main(){
-	custom_package.PrintValues("kjnkbk")
-	custom_package.Val = 100
-	fmt.Println(custom_package.Val)
+	router := gin.Default()
+	router.GET("/getapi", getcontroller)
+	router.POST("/postapi", postcontroller)
+	router.PUT("/putapi", putcontroller)
+	router.DELETE("/deleteapi", deletecontroller)
+	database.InitDB()
+	models.AutoMigrateTableIfNotExist()
+	router.Run()
 }
-// ******///////  CUSTOM PACKAGE   //////
+func getcontroller(c *gin.Context){
+c.JSON(http.StatusOK, gin.H{
+	"data": data,
+})
+}
+func postcontroller(c *gin.Context){
+	err := c.BindJSON(&data)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "something went wrong",
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": data,
+		"message": "posted sucessfully",
+	})
+
+}
+func putcontroller(c *gin.Context){
+	err := c.BindJSON(&data)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "something went wrong",
+		})
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"data": data,
+		"message": "updated sucessfully",
+	})
+}
+func deletecontroller(c *gin.Context){
+	data = api{}
+	c.JSON(http.StatusOK, gin.H{
+		"data": data,
+		"message": "deleted sucessfully",
+	})
+}
+// ******///////  API understanding //////
+
+// ******/////// THIRD PARTY API understanding //////
+// func main() {
+// 	router := gin.Default()
+// 	router.GET("/getapi", getcontroller)
+// 	router.Run()
+// }
+
+// var url = "http://date.jsontest.com/"
+
+// func getcontroller(c *gin.Context) {
+// 	resp, err := http.Get(url)
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"message": err,
+// 		})
+// 	}
+// 	//close response body
+// 	defer resp.Body.Close()
+// 	//read all response and convert into array of bytes
+// 	data, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"message": err,
+// 		})
+// 	}
+// 	var target map[string]interface{}
+// 	// unmarshal byte data ko read krke target map me bind krdega
+// 	err = json.Unmarshal(data, &target)
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"message": err,
+// 		})
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"data": target,
+// 	})
+// }
+
+// ******/////// THIRD PARTY API understanding //////
