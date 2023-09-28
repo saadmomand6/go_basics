@@ -1,24 +1,36 @@
 package main
 
 import (
-	//"errors"
-	//"encoding/json"
-	//"fmt"
-	// "sync"
-	// "time"
-	//"strings"
-	//"runtime"
-	//"sort"
-	// custom_package "gomodulename/custom"
-	//"encoding/json"
-	// "encoding/json"
-	// "io"
-	"gomodulename/database"
-	"gomodulename/models"
-	"net/http"
 
-	"github.com/gin-gonic/gin"
+//"errors"
+//"encoding/json"
+//"fmt"
+// "sync"
+// "time"
+//"strings"
+//"runtime"
+//"sort"
+// custom_package "gomodulename/custom"
+//"encoding/json"
+// "encoding/json"
+// "io"
+//"gomodulename/database"
+// "gomodulename/models"
+// "gomodulename/connection/database"
+// "gomodulename/connection/models"
+// "gomodulename/connection/utilities"
+// "github.com/gin-gonic/gin"
+//"net/http"
+
+
+	// "encoding/json"
+	// "time"
+
+	// "github.com/joho/godotenv"
+	// "gorm.io/driver/postgres"
+	// "gorm.io/gorm"
 )
+
 
 // ******simple function calling and const
 
@@ -649,60 +661,58 @@ import (
 // ******///////  GIN FRAMWORK //////
 
 // ******///////  API understanding //////
-type api struct{
-	Name string `json:"name"`
-	Email string `json: "email"`
-}
+// type api struct{
+// 	Name string `json:"name"`
+// 	Email string `json: "email"`
+// }
 
- var data api
+//  var data api
 
-func main(){
-	router := gin.Default()
-	router.GET("/getapi", getcontroller)
-	router.POST("/postapi", postcontroller)
-	router.PUT("/putapi", putcontroller)
-	router.DELETE("/deleteapi", deletecontroller)
-	database.InitDB()
-	models.AutoMigrateTableIfNotExist()
-	router.Run()
-}
-func getcontroller(c *gin.Context){
-c.JSON(http.StatusOK, gin.H{
-	"data": data,
-})
-}
-func postcontroller(c *gin.Context){
-	err := c.BindJSON(&data)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "something went wrong",
-		})
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"data": data,
-		"message": "posted sucessfully",
-	})
+// func main(){
+// router := gin.Default()
+// router.GET("/getapi", getcontroller)
+// router.POST("/postapi", postcontroller)
+// router.PUT("/putapi", putcontroller)
+// router.DELETE("/deleteapi", deletecontroller)
+// router.Run()
+// }
+// func getcontroller(c *gin.Context){
+// c.JSON(http.StatusOK, gin.H{
+// 	"data": data,
+// })
+// }
+// func postcontroller(c *gin.Context){
+// 	err := c.BindJSON(&data)
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"message": "something went wrong",
+// 		})
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"data": data,
+// 		"message": "posted sucessfully",
+// 	})
 
-}
-func putcontroller(c *gin.Context){
-	err := c.BindJSON(&data)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"message": "something went wrong",
-		})
-	}
-	c.JSON(http.StatusOK, gin.H{
-		"data": data,
-		"message": "updated sucessfully",
-	})
-}
-func deletecontroller(c *gin.Context){
-	data = api{}
-	c.JSON(http.StatusOK, gin.H{
-		"data": data,
-		"message": "deleted sucessfully",
-	})
-}
+// }
+// func putcontroller(c *gin.Context){
+// 	err := c.BindJSON(&data)
+// 	if err != nil {
+// 		c.JSON(http.StatusNotFound, gin.H{
+// 			"message": "something went wrong",
+// 		})
+// 	}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"data": data,
+// 		"message": "updated sucessfully",
+// 	})
+// }
+// func deletecontroller(c *gin.Context){
+// 	data = api{}
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"data": data,
+// 		"message": "deleted sucessfully",
+// 	})
+// }
 // ******///////  API understanding //////
 
 // ******/////// THIRD PARTY API understanding //////
@@ -744,3 +754,83 @@ func deletecontroller(c *gin.Context){
 // }
 
 // ******/////// THIRD PARTY API understanding //////
+
+// ******/////////////////////////////////// Understanding Connection with database/////////////////////////////////
+// steps=:-
+//FIRST DECLARE THE ENV FILE VARIABLES
+// THEN INITIALIZE THE ENVIRONMENT IN UTILITY FOLDER
+// NOW YOU WILL MAKE A CONNECTION WITH DATABASE
+// and also make a table using a struct loke Basic
+// MAIN FUNCTION IN MAiN:GO
+// func main() {
+// 	utilities.LocalEnvInitialize()
+
+// 	database.Env = utilities.ENV()
+
+// 	router := gin.Default()
+// 	database.InitDB()
+// 	models.AutoMigrateTableIfNotExist()
+// 	router.Run()
+// }
+
+// MAIN FUNCTION IN MAiN:GO
+// ******/////////////////////////////////// Understanding Connection with database /////////////////////////////////
+
+// ******/////////////////////////////////// Crud App /////////////////////////////////'
+
+// var env map[string]string
+
+// func LocalEnvInitialize() {
+// 	// env_selection := os.Getenv("APP_ENV")
+// 	// env_selection := "local"
+// 	//envPath := "./environments/" + env_selection + ".env"
+// 	envPath := "./environments/" + ".env"
+// 	environment, err := godotenv.Read(envPath)
+// 	if err != nil {
+
+// 	}
+// 	env = environment
+// }
+// func ENV() map[string]string {
+// 	return env
+// }
+// //database connection
+// var (
+// 	DBCon *gorm.DB
+// 	Env   map[string]string
+// )
+// func InitDB() {
+// 	dbURL := "postgres://" + Env["DATABASE_USERNAME"] + ":" + Env["DATABASE_PASSWORD"] + "@" + Env["DATABASE_HOST"] + ":" + Env["DATABASE_PORT"] + "/"
+// 	conn, err := gorm.Open(postgres.Open(dbURL), &gorm.Config{}) //this line can be removed
+// 	conn, err = gorm.Open(postgres.Open(dbURL+Env["DATABASE_NAME"]), &gorm.Config{})
+// 	DBCon = conn
+// 	if err != nil {
+// 		panic(err)
+// 	}
+
+// }
+// func IsTableExist(table_exist bool) bool {
+// 	DBCon.Raw("SELECT EXISTS ( SELECT 1 FROM pg_tables WHERE tablename = 'Basic' )").Scan(&table_exist)
+// 	return table_exist
+// }
+// func main(){
+
+// }
+// //database connection
+// type Orders struct {
+// 	Id string `json:"id"`
+// 	Create_dtm time.Time `json:"create_dtm"`
+// 	Order_id  string `json:"order_id"`
+// 	Phone string `json:"phone"`
+// 	Name  string `json:"name"`
+// 	Address  string `json:"address"`
+// 	Menu json.RawMessage `json:"menu"`
+// 	Total_item int `json:"total_item"`
+// 	Pay int `json:"pay"`
+// }
+
+// type Query struct {
+// 	Phone string `json:"phone"`
+// 	Date  string `json:"date"`
+// }
+// ******/////////////////////////////////// Crud App /////////////////////////////////
